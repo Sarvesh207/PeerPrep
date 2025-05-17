@@ -11,7 +11,7 @@ import authApi from "../services/auth.api";
 import { addUser } from "../store/slices/userSlice";
 import { useDispatch } from "react-redux";
 import { useNavigate } from "react-router-dom";
-import { Code } from "lucide-react";
+import { Code, Eye, EyeOff } from "lucide-react";
 
 interface AuthFormProps {
   mode?: "login" | "signup";
@@ -19,8 +19,10 @@ interface AuthFormProps {
 }
 
 const AuthForm = ({ mode = "login", onSuccess }: AuthFormProps) => {
+  
   const [activeTab, setActiveTab] = useState<string>(mode);
   const [isLoading, setIsLoading] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
 
   const navigate = useNavigate();
   const dispatch = useDispatch();
@@ -51,21 +53,43 @@ const AuthForm = ({ mode = "login", onSuccess }: AuthFormProps) => {
   });
 
   async function handleSubmit(values) {
-    const { email, password } = values;
-    try {
-      const response = await authApi.login(email, password);
+    if (activeTab === "login") {
+      const { email, password } = values;
+      try {
+        const response = await authApi.login(email, password);
 
-      if (response.status === 200) {
-        dispatch(addUser(response.data.data));
+        if (response.status === 200) {
+          dispatch(addUser(response.data.data));
 
-        navigate("/complete-profile");
-        onSuccess();
+          navigate("/home");
+          onSuccess();
+        }
+      } catch (error) {
+        console.log("Something went wrong");
       }
-    } catch (error) {
-      console.log("Something went wrong");
+    } else {
+      const { firstName, lastName, email, password } = values;
+      try {
+        const response = await authApi.signUp(
+          firstName,
+          lastName,
+          email,
+          password
+        );
+
+        if (response.status === 200) {
+          dispatch(addUser(response.data.data));
+
+          navigate("/complete-profile");
+          onSuccess();
+        }
+      } catch (error) {
+        console.log("Something went wrong");
+      }
     }
   }
 
+  const handleShowPassword = () => setShowPassword((prev) => !prev);
   return (
     <div className="space-y-6 py-4">
       <div className="flex justify-center mb-6">
@@ -75,7 +99,7 @@ const AuthForm = ({ mode = "login", onSuccess }: AuthFormProps) => {
         </div>
       </div>
 
-      <Tabs defaultValue={mode} onValueChange={setActiveTab} className="w-full">
+      <Tabs defaultValue={mode}  onValueChange={setActiveTab} className="w-full">
         <TabsList className="grid w-full grid-cols-2">
           <TabsTrigger value="login">Log In</TabsTrigger>
           <TabsTrigger value="signup">Sign Up</TabsTrigger>
@@ -105,14 +129,21 @@ const AuthForm = ({ mode = "login", onSuccess }: AuthFormProps) => {
                     className="text-red-500 text-sm"
                   />
                 </div>
-                <div className="space-y-2">
+                <div className="space-y-2 relative">
                   <Label htmlFor="password">Password</Label>
                   <Field
                     as={Input}
                     name="password"
-                    type="password"
+                    type={showPassword ? "text" : "password"}
                     className=""
                   />
+                  <div className="absolute top-8 right-3">
+                    {showPassword ? (
+                      <Eye size={22} onClick={handleShowPassword} />
+                    ) : (
+                      <EyeOff size={22} onClick={handleShowPassword} />
+                    )}
+                  </div>
                   <ErrorMessage
                     name="password"
                     component="div"

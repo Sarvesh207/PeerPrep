@@ -25,18 +25,14 @@ const userSchema = new mongoose.Schema(
     userName: {
       type: String,
       lowercase: true,
-      required: true,
-      unique: true,
       trim: true,
     },
     countryCode: {
       type: String,
-      required: true,
       trim: true,
     },
     phoneNumber: {
       type: String,
-      required: true,
       trim: true,
       maxLength: 12,
     },

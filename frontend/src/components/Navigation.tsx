@@ -12,7 +12,12 @@ import {
   Settings,
   ChevronDown,
 } from "lucide-react";
-import { Dialog, DialogContent, DialogTrigger } from "@/components/ui/dialog";
+import {
+  Dialog,
+  DialogContent,
+  DialogTrigger,
+  DialogClose,
+} from "@/components/ui/dialog";
 import AuthForm from "./AuthForm";
 import { useTheme } from "./ThemeProvider";
 import { Link } from "react-router-dom";
@@ -23,7 +28,8 @@ import { removeUser } from "@/store/slices/userSlice";
 const Navigation = () => {
   const user = useSelector((store) => store.user);
   const dispatch = useDispatch();
-
+  const [openLogin, setOpenLogin] = useState(false);
+  const [openSignup, setOpenSignup] = useState(false);
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const { theme, setTheme } = useTheme();
   const [showDropDown, setShowDropDown] = useState(false);
@@ -162,21 +168,24 @@ const Navigation = () => {
                 <Moon className="h-5 w-5" />
               )}
             </Button>
-            <Dialog>
+            <Dialog open={openLogin} onOpenChange={setOpenLogin}>
               <DialogTrigger asChild>
                 <Button variant="outline">Log in</Button>
               </DialogTrigger>
               <DialogContent className="sm:max-w-[425px]">
-                <AuthForm mode="login" onSuccess={() => setIsLoggedIn(true)} />
+                <AuthForm mode="login" onSuccess={() => setOpenLogin(false)} />
               </DialogContent>
             </Dialog>
 
-            <Dialog>
+            <Dialog open={openSignup} onOpenChange={setOpenSignup}>
               <DialogTrigger asChild>
                 <Button>Join Now</Button>
               </DialogTrigger>
               <DialogContent className="sm:max-w-[425px]">
-                <AuthForm mode="signup" onSuccess={() => setIsLoggedIn(true)} />
+                <AuthForm
+                  mode="signup"
+                  onSuccess={() => setOpenSignup(false)}
+                />
               </DialogContent>
             </Dialog>
           </div>

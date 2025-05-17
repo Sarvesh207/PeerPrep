@@ -21,13 +21,14 @@ authRouter.post("/signup", async (req, res) => {
       email,
       password: passwordHash,
     });
-    console.log(user)
+    console.log("New user",user)
 
     await user.save();
 
     res.status(200).json("User added Successfully");
   } catch (error) {
     res.send("ERROR : " + error.message);
+    console.log(error)
   }
 });
 // login
@@ -38,7 +39,7 @@ authRouter.post("/login", async (req, res) => {
   //  Find user to get hashed password
 
   try {
-    const user = await User.findOne({ emailId: email });
+    const user = await User.findOne({ email: email });
     if (!user) {
       throw new Error("Invalid Credentials");
     }

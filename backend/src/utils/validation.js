@@ -5,7 +5,7 @@ const validateSignUpData = (req) => {
 
   if (!firstName || !lastName) {
     throw new Error("Name is not valid");
-  } else if (!validator.isEmail(email)) {
+  } else if (typeof email !== "string" || !validator.isEmail(email.trim())) {
     throw new Error("Email is not valid");
   } else if (!validator.isStrongPassword(password)) {
     throw new Error("Please enter a strong Password");
@@ -23,7 +23,7 @@ const validateEditProfileData = (req) => {
     "gender",
     "about",
     "skills",
-    "email"
+    "email",
   ];
   console.log(req.body);
 
@@ -31,8 +31,7 @@ const validateEditProfileData = (req) => {
     allowedEditFields.includes(field)
   );
 
-    console.log(isEditAllowed);
-
+  console.log(isEditAllowed);
 
   return isEditAllowed;
 };
