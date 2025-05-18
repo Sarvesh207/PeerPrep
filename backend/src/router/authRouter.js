@@ -4,13 +4,12 @@ const { validateSignUpData } = require("../utils/validation");
 const bcrypt = require("bcrypt");
 const authRouter = express.Router();
 
-// signup   
+// signup
 authRouter.post("/signup", async (req, res) => {
   try {
     // validate
     validateSignUpData(req);
     const { firstName, lastName, email, password } = req.body;
-    console.log(req.body);
     //  Encrypt the Password
     const passwordHash = await bcrypt.hash(password, 10);
 
@@ -21,20 +20,40 @@ authRouter.post("/signup", async (req, res) => {
       email,
       password: passwordHash,
     });
-    console.log("New user",user)
+
+    const token = await user.getJWT();
+
+    if (!token) {
+      throw new Error("Something went wrong while registering user");
+    }
+
 
     await user.save();
 
-    res.status(200).json("User added Successfully");
+    const createUser = await User.findById(user._id).select("-password");
+
+    if (!createUser) {
+      throw Error("Something went wrong while registering user");
+    }
+
+    res.cookie("token", token, {
+      httpOnly: true,
+      secure: false, // set to true in production (HTTPS)
+      sameSite: "lax", // or 'none' if you're using cross-site cookies (and must use secure: true)
+    });
+
+    res.status(201).json({
+      message: "User added Successfully",
+      user: createUser,
+    });
   } catch (error) {
     res.send("ERROR : " + error.message);
-    console.log(error)
+    console.log(error);
   }
 });
 // login
 authRouter.post("/login", async (req, res) => {
   const { email, password } = req.body;
-  console.log(req.body)
 
   //  Find user to get hashed password
 
@@ -55,12 +74,12 @@ authRouter.post("/login", async (req, res) => {
       res.cookie("token", token, {
         httpOnly: true,
         secure: false, // set to true in production (HTTPS)
-        sameSite: 'lax' // or 'none' if you're using cross-site cookies (and must use secure: true)
+        sameSite: "lax", // or 'none' if you're using cross-site cookies (and must use secure: true)
       });
       res.status(200).json({
-        message:"Login Successfully",
-        status:200,
-        data:user
+        message: "Login Successfully",
+        status: 200,
+        data: user,
       });
     } else {
       throw new Error("Invalid Credentials");
@@ -71,13 +90,12 @@ authRouter.post("/login", async (req, res) => {
 });
 //  logout
 authRouter.post("/logout", async (req, res) => {
-
-  //  TODO : 
+  //  TODO :
   res.cookie("token", null),
     {
       expires: new Date(Date.now()),
     };
 
-  res.send({message :"user Logout successfully"});
+  res.send({ message: "user Logout successfully" });
 });
 module.exports = authRouter;

@@ -27,7 +27,7 @@ const ProfileForm = () => {
     firstName: user?.firstName ?? "",
     lastName: user?.lastName ?? "",
     userName: user?.userName ?? "",
-    email: user?.emailId ?? "",
+    email: user?.email ?? "",
     phoneNumber: user?.phoneNumber ?? "",
     countryCode: user?.countryCode ?? "+91",
     about: user?.about ?? "",
@@ -73,7 +73,6 @@ const ProfileForm = () => {
     try {
       setIsLoading(true);
       const data = { ...values, skills: [values.skills] };
-      console.log(values);
 
       const response = await userApi.updateProfile(data);
       if (response.status === 200) {

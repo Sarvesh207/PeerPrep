@@ -11,6 +11,7 @@ import {
   LogOut,
   Settings,
   ChevronDown,
+  BellDot 
 } from "lucide-react";
 import {
   Dialog,
@@ -20,13 +21,14 @@ import {
 } from "@/components/ui/dialog";
 import AuthForm from "./AuthForm";
 import { useTheme } from "./ThemeProvider";
-import { Link } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
 import { useSelector, useDispatch } from "react-redux";
 import authApi from "@/services/auth.api";
 import { removeUser } from "@/store/slices/userSlice";
 
 const Navigation = () => {
   const user = useSelector((store) => store.user);
+  const location = useLocation();
   const dispatch = useDispatch();
   const [openLogin, setOpenLogin] = useState(false);
   const [openSignup, setOpenSignup] = useState(false);
@@ -34,6 +36,7 @@ const Navigation = () => {
   const { theme, setTheme } = useTheme();
   const [showDropDown, setShowDropDown] = useState(false);
   const dropdownRef = useRef(null);
+
 
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
@@ -68,26 +71,28 @@ const Navigation = () => {
           <span className="text-xl font-bold gradient-text">PeerPrep</span>
         </Link>
 
-        <nav className="hidden md:flex items-center gap-6">
-          <a
-            href="#features"
-            className="text-muted-foreground hover:text-foreground transition-colors"
-          >
-            How it works
-          </a>
-          <a
-            href="#success-stories"
-            className="text-muted-foreground hover:text-foreground transition-colors"
-          >
-            Success Stories
-          </a>
-          <a
-            href="#faq"
-            className="text-muted-foreground hover:text-foreground transition-colors"
-          >
-            FAQ
-          </a>
-        </nav>
+        {location.pathname === "/" && (
+          <nav className="hidden md:flex items-center gap-6">
+            <a
+              href="#features"
+              className="text-muted-foreground hover:text-foreground transition-colors"
+            >
+              How it works
+            </a>
+            <a
+              href="#success-stories"
+              className="text-muted-foreground hover:text-foreground transition-colors"
+            >
+              Success Stories
+            </a>
+            <a
+              href="#faq"
+              className="text-muted-foreground hover:text-foreground transition-colors"
+            >
+              FAQ
+            </a>
+          </nav>
+        )}
 
         {user ? (
           <div className="flex items-center gap-4">
@@ -106,7 +111,7 @@ const Navigation = () => {
               <Search className="h-5 w-5" />
             </Button>
             <Button variant="ghost" size="icon">
-              <MessageSquare className="h-5 w-5" />
+              <BellDot className="h-5 w-5" />
             </Button>
             <Button
               variant="outline"

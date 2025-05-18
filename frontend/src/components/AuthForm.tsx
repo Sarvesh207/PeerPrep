@@ -19,7 +19,6 @@ interface AuthFormProps {
 }
 
 const AuthForm = ({ mode = "login", onSuccess }: AuthFormProps) => {
-  
   const [activeTab, setActiveTab] = useState<string>(mode);
   const [isLoading, setIsLoading] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
@@ -76,9 +75,8 @@ const AuthForm = ({ mode = "login", onSuccess }: AuthFormProps) => {
           email,
           password
         );
-
-        if (response.status === 200) {
-          dispatch(addUser(response.data.data));
+        if (response.status === 201) {
+          dispatch(addUser(response.data.user));
 
           navigate("/complete-profile");
           onSuccess();
@@ -99,7 +97,7 @@ const AuthForm = ({ mode = "login", onSuccess }: AuthFormProps) => {
         </div>
       </div>
 
-      <Tabs defaultValue={mode}  onValueChange={setActiveTab} className="w-full">
+      <Tabs defaultValue={mode} onValueChange={setActiveTab} className="w-full">
         <TabsList className="grid w-full grid-cols-2">
           <TabsTrigger value="login">Log In</TabsTrigger>
           <TabsTrigger value="signup">Sign Up</TabsTrigger>
@@ -214,14 +212,21 @@ const AuthForm = ({ mode = "login", onSuccess }: AuthFormProps) => {
                     className="text-red-500 text-sm"
                   />
                 </div>
-                <div className="space-y-2">
+                <div className="space-y-2 relative">
                   <Label htmlFor="password">Password</Label>
                   <Field
                     as={Input}
                     className=""
                     name="password"
-                    type="password"
+                    type={showPassword ? "text" : "password"}
                   />
+                  <div className="absolute top-8 right-3">
+                    {showPassword ? (
+                      <Eye size={22} onClick={handleShowPassword} />
+                    ) : (
+                      <EyeOff size={22} onClick={handleShowPassword} />
+                    )}
+                  </div>
                   <ErrorMessage
                     name="password"
                     component="div"

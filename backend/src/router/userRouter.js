@@ -38,7 +38,6 @@ userRouter.patch("/profile/edit", userAuth, async (req, res) => {
     }
 
     const loggedInUser = req.user;
-    console.log(loggedInUser);
     const allowedEditFields = [
       "firstName",
       "userName",
@@ -58,7 +57,6 @@ userRouter.patch("/profile/edit", userAuth, async (req, res) => {
         allowedEditFields.includes(key)
       )
     );
-    console.log("updatedFields", updatedFields);
 
     // await loggedInUser.save();
 
@@ -100,7 +98,6 @@ userRouter.get("/profile/connections/received", userAuth, async (req, res) => {
 userRouter.get("/profile/connections", userAuth, async (req, res) => {
   try {
     const loggedInUser = req.user;
-    console.log("Working");
 
     //   get the mutual connection  the people that I have send connection request
     const connectionRequest = await ConnectionRequest.find({

@@ -22,7 +22,7 @@ function Layout() {
       }
     } catch (error) {
       if (error.status == 400) {
-        // navigate("/login");
+        navigate("/");
       }
       console.log("Error", error);
     }
